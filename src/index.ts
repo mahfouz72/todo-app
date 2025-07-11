@@ -9,6 +9,7 @@ app.get("/", (req: Request, res: Response) => {
     res.send("Hello World!");
 })
 
+app.use(express.json());
 app.use('/todos', todoRouter);
 app.use('/users', userRouter);
 
