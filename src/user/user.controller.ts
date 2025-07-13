@@ -1,12 +1,6 @@
 import {Request, Response} from "express";
-import {z} from 'zod';
-import {User} from "./user.interface";
 import {userStore} from "./user.model";
-
-const userSchema = z.object({
-    username: z.string(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-})
+import {User, userSchema} from "./user.interface";
 
 export const userController = {
     getAllUsers: (req: Request, res: Response) => {
