@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {Todo} from "./todo.interface";
 import {TodoStore} from "./todo.model";
+import {ResponseError} from "../utils/ResponseError";
 
 export const todoController = {
     getAllTodos: (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ export const todoController = {
         const id = +req.params.id;
         const index = TodoStore.todos.findIndex(todo => todo.id === id);
         if (index === -1) {
-            return res.status(404).json({ error: "Todo not found" });
+            throw new ResponseError("Todo is not found", 404);
         }
         res.json(TodoStore.todos[index]);
     },
@@ -34,7 +35,7 @@ export const todoController = {
         const index = TodoStore.todos.findIndex(todo => todo.id === id);
 
         if (index === -1) {
-            return res.status(404).json({ error: "Todo not found" });
+            throw new ResponseError("Todo is not found", 404);
         }
 
         TodoStore.todos[index].title = title ?? TodoStore.todos[index].title;
