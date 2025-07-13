@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {userStore} from "./user.model";
 import {User, userSchema} from "./user.interface";
+import {ZodError} from "zod";
 
 export const userController = {
     getAllUsers: (req: Request, res: Response) => {
@@ -15,7 +16,9 @@ export const userController = {
             res.json(user);
         }
         catch (error) {
-            res.status(400).send(error);
+            if (error instanceof ZodError) {
+                res.status(400).send(error.issues);
+            }
         }
     }
 }
