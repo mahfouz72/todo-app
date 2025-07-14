@@ -13,3 +13,5 @@ dist/
 .env.*.local
 
 .idea/
+
+.env
