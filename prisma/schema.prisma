@@ -19,7 +19,7 @@ model User {
   username String @unique
   password String
   createdAt DateTime @default(now())
-  Todo Todo[]
+  todos Todo[]
 }
 
 model Todo {
