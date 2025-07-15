@@ -19,6 +19,7 @@ export const userRepository = {
             select: {
                 id: true,
                 username: true,
+                todos: true,
             }
         });
     },

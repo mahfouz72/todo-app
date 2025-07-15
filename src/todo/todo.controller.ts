@@ -1,47 +1,48 @@
-import {Request, Response} from "express";
-import {Todo} from "./todo.interface";
-import {TodoStore} from "./todo.model";
-import {ResponseError} from "../utils/ResponseError";
+import {NextFunction, Request, Response} from "express";
+import {Todo, todoSchema} from "./todo.interface";
+import {todoRepository} from "./todo.model";
 
 export const todoController = {
-    getAllTodos: (req: Request, res: Response) => {
-        res.json(TodoStore.todos);
+    getAllTodos: (req: Request, res: Response, next: NextFunction) => {
+        const userId = +req.params.userId;
+        todoRepository.getAllTodos(userId).then((todos) => {
+            res.json(todos);
+        }).catch(next)
     },
 
-    getTodoById: (req: Request, res: Response) => {
-        const id = +req.params.id;
-        const index = TodoStore.todos.findIndex(todo => todo.id === id);
-        if (index === -1) {
-            throw new ResponseError("Todo is not found", 404);
-        }
-        res.json(TodoStore.todos[index]);
+    getTodoById: (req: Request, res: Response, next: NextFunction) => {
+        const userId = +req.params.userId;
+        const todoId = +req.params.todoId;
+        todoRepository.getTodoById(userId, todoId).then((todos) => {
+            res.json(todos);
+        }).catch(next);
     },
 
-    createTodo: (req: Request, res: Response) => {
+    createTodo: (req: Request, res: Response, next: NextFunction) => {
+        const userId = +req.params.userId;
         const todo: Todo = req.body;
-        TodoStore.todos.push(todo);
-        res.json(todo);
+        todoSchema.parse(todo);
+        todoRepository.createTodo(userId, todo).then((todo) => {
+            res.json(todo);
+        }).catch(next);
     },
 
-    deleteTodoById: (req: Request, res: Response) => {
-        const id = +req.params.id;
-        TodoStore.todos = TodoStore.todos.filter(todo => todo.id !== id);
-        res.json(TodoStore.todos);
+
+    deleteTodoById: (req: Request, res: Response, next: NextFunction) => {
+        const userId = +req.params.userId;
+        const todoId = +req.params.todoId;
+        todoRepository.deleteTodoById(userId, todoId).then((todo) => {
+            res.json(todo);
+        }).catch(next);
     },
 
-    updateTodoById: (req: Request, res: Response) => {
-        const id = +req.params.id;
-        const {title, description, completed} = req.body;
-        const index = TodoStore.todos.findIndex(todo => todo.id === id);
-
-        if (index === -1) {
-            throw new ResponseError("Todo is not found", 404);
-        }
-
-        TodoStore.todos[index].title = title ?? TodoStore.todos[index].title;
-        TodoStore.todos[index].description = description ?? TodoStore.todos[index].description;
-        TodoStore.todos[index].completed = completed ?? TodoStore.todos[index].completed;
-
-        res.json(TodoStore.todos[index]);
+    updateTodoById: (req: Request, res: Response, next: NextFunction) => {
+        const userId = +req.params.userId;
+        const todoId = +req.params.todoId;
+        const todo: Todo = req.body;
+        todoSchema.parse(todo);
+        todoRepository.updateTodoById(userId, todoId, todo).then((todo) => {
+            res.json(todo);
+        }).catch(next);
     }
 }
