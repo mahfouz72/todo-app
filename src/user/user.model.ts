@@ -1,15 +1,22 @@
 import {User} from "./user.interface";
-import dp from "../config/database.config";
+import {prisma} from "../../prisma/client";
 
 export const userRepository = {
     getAllUsers: async ()  => {
-        const query = "SELECT * FROM `USER`";
-        const result = await dp.promise().query(query);
-        return result[0];
+        return prisma.user.findMany({
+            select: {
+                username: true,
+            }
+        });
     },
 
     createUser: async (user: User) => {
-        const query = "INSERT INTO `USER` (username, password) VALUES (?, ?)";
-        await dp.promise().query(query, [user.username, user.password]);
+        const {username, password} = user;
+        return prisma.user.create({
+            data: {
+                username: username,
+                password: password,
+            }
+        });
     }
 }
