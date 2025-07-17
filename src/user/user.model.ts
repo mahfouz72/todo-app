@@ -1,5 +1,6 @@
 import {User} from "./user.interface";
 import {prisma} from "../../prisma/client";
+import bcrypt from "bcrypt";
 
 export const userRepository = {
     getAllUsers: async ()  => {
@@ -26,23 +27,25 @@ export const userRepository = {
 
     createUser: async (user: User) => {
         const {username, password} = user;
+        const hashedPassword = await bcrypt.hash(password, 10);
         return prisma.user.create({
             data: {
                 username: username,
-                password: password,
+                password: hashedPassword,
             }
         });
     },
 
     updateUser: async(user: User, id: number) => {
         const {username, password} = user;
+        const hashedPassword = await bcrypt.hash(password, 10);
         return prisma.user.update({
             where: {
                 id: id,
             },
             data: {
                 username: username,
-                password: password,
+                password: hashedPassword,
             },
         })
     },
@@ -51,6 +54,14 @@ export const userRepository = {
         return prisma.user.delete({
             where: {
                 id: id,
+            }
+        });
+    },
+
+    getUserByUsername: async (username: string) => {
+        return prisma.user.findUnique({
+            where: {
+                username: username,
             }
         });
     },

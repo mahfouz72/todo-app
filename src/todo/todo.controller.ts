@@ -4,14 +4,14 @@ import {todoRepository} from "./todo.model";
 
 export const todoController = {
     getAllTodos: (req: Request, res: Response, next: NextFunction) => {
-        const userId = +req.params.userId;
+        const userId = +req.user.id;
         todoRepository.getAllTodos(userId).then((todos) => {
             res.json(todos);
         }).catch(next)
     },
 
     getTodoById: (req: Request, res: Response, next: NextFunction) => {
-        const userId = +req.params.userId;
+        const userId = +req.user.id;
         const todoId = +req.params.todoId;
         todoRepository.getTodoById(userId, todoId).then((todos) => {
             res.json(todos);
@@ -19,7 +19,7 @@ export const todoController = {
     },
 
     createTodo: (req: Request, res: Response, next: NextFunction) => {
-        const userId = +req.params.userId;
+        const userId = +req.user.id;
         const todo: Todo = req.body;
         todoSchema.parse(todo);
         todoRepository.createTodo(userId, todo).then((todo) => {
@@ -29,7 +29,7 @@ export const todoController = {
 
 
     deleteTodoById: (req: Request, res: Response, next: NextFunction) => {
-        const userId = +req.params.userId;
+        const userId = +req.user.id;
         const todoId = +req.params.todoId;
         todoRepository.deleteTodoById(userId, todoId).then((todo) => {
             res.json(todo);
@@ -37,7 +37,7 @@ export const todoController = {
     },
 
     updateTodoById: (req: Request, res: Response, next: NextFunction) => {
-        const userId = +req.params.userId;
+        const userId = +req.user.id;
         const todoId = +req.params.todoId;
         const todo: Todo = req.body;
         todoSchema.parse(todo);
